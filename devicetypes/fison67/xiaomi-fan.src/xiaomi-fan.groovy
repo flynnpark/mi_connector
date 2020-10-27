@@ -32,32 +32,32 @@ import groovy.transform.Field
 
 @Field
 LANGUAGE_MAP = [
-    "temp" : [
-        "Korean" : "온도",
+    "temp": [
+        "Korean": "온도",
         "English": "Tem"
     ],
-    "hum"  : [
-        "Korean" : "습도",
+    "hum": [
+        "Korean": "습도",
         "English": "Humi"
     ],
-    "buz"  : [
-        "Korean" : "부저음",
+    "buz": [
+        "Korean": "부저음",
         "English": "Buzzer"
     ],
     "angle": [
-        "Korean" : "회전",
+        "Korean": "회전",
         "English": "Ang"
     ],
-    "mode" : [
-        "Korean" : "모드",
+    "mode": [
+        "Korean": "모드",
         "English": "Mode"
     ],
-    "con"  : [
-        "Korean" : "회전 각도",
+    "con": [
+        "Korean": "회전 각도",
         "English": "Control Angle"
     ],
     "direc": [
-        "Korean" : "좌우 이동",
+        "Korean": "좌우 이동",
         "English": "Direction"
     ]
 ]
@@ -352,7 +352,7 @@ def setStatus(params) {
             sendEvent(name: "level", value: params.data)
             break;
         case "acPower":
-            state.acPower = (params.data == "on" ? "☈: " : "✕: ")
+            state.acPower = (params.data == "on" ? "☈: ": "✕: ")
             multiatt()
             break;
         case "batteryLevel":
@@ -361,11 +361,11 @@ def setStatus(params) {
             multiatt()
             break;
         case "power":
-            state.power = (params.data == "true" ? "on" : "off")
-            sendEvent(name: "switch", value: (params.data == "true" ? "on" : "off"))
+            state.power = (params.data == "true" ? "on": "off")
+            sendEvent(name: "switch", value: (params.data == "true" ? "on": "off"))
             break;
         case "buzzer":
-            sendEvent(name: "buzzer", value: (params.data == "true" ? "on" : "off"))
+            sendEvent(name: "buzzer", value: (params.data == "true" ? "on": "off"))
             break;
         case "ledBrightness":
             sendEvent(name: "ledBrightness", value: params.data)
@@ -376,10 +376,10 @@ def setStatus(params) {
 def refresh() {
     log.debug "Refresh"
     def options = [
-        "method" : "GET",
-        "path"   : "/devices/get/${state.id}",
+        "method": "GET",
+        "path": "/devices/get/${state.id}",
         "headers": [
-            "HOST"        : parent._getServerURL(),
+            "HOST": parent._getServerURL(),
             "Content-Type": "application/json"
         ]
     ]
@@ -452,16 +452,16 @@ def setLevel(level) {
     def currentState = device.currentValue("fanmode")
     if (currentState == "natural") {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanNatural",
+            "id": state.id,
+            "cmd": "fanNatural",
             "data": level
         ]
         def options = makeCommand(body)
         sendCommand(options, null)
     } else {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanSpeed",
+            "id": state.id,
+            "cmd": "fanSpeed",
             "data": level
         ]
         def options = makeCommand(body)
@@ -506,8 +506,8 @@ def setFanSpeed(speed) {
         val = 100
     }
     def body = [
-        "id"  : state.id,
-        "cmd" : "fanSpeed",
+        "id": state.id,
+        "cmd": "fanSpeed",
         "data": val
     ]
     def options = makeCommand(body)
@@ -521,16 +521,16 @@ def setFanSpeed1() {
     state.fanSpeed = 25
     if (currentState == "natural") {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanNatural",
+            "id": state.id,
+            "cmd": "fanNatural",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
         sendCommand(options, null)
     } else {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanSpeed",
+            "id": state.id,
+            "cmd": "fanSpeed",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
@@ -545,16 +545,16 @@ def setFanSpeed2() {
     def currentState = device.currentValue("fanmode")
     if (currentState == "natural") {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanNatural",
+            "id": state.id,
+            "cmd": "fanNatural",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
         sendCommand(options, null)
     } else {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanSpeed",
+            "id": state.id,
+            "cmd": "fanSpeed",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
@@ -569,16 +569,16 @@ def setFanSpeed3() {
     state.fanSpeed = 75
     if (currentState == "natural") {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanNatural",
+            "id": state.id,
+            "cmd": "fanNatural",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
         sendCommand(options, null)
     } else {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanSpeed",
+            "id": state.id,
+            "cmd": "fanSpeed",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
@@ -593,16 +593,16 @@ def setFanSpeed4() {
     state.fanSpeed = 100
     if (currentState == "natural") {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanNatural",
+            "id": state.id,
+            "cmd": "fanNatural",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
         sendCommand(options, null)
     } else {
         def body = [
-            "id"  : state.id,
-            "cmd" : "fanSpeed",
+            "id": state.id,
+            "cmd": "fanSpeed",
             "data": state.fanSpeed
         ]
         def options = makeCommand(body)
@@ -613,8 +613,8 @@ def setFanSpeed4() {
 def generalOn() {
     log.debug "generalOn >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "fanSpeed",
+        "id": state.id,
+        "cmd": "fanSpeed",
         "data": state.fanSpeed == null ? 25 : state.fanSpeed
     ]
     def options = makeCommand(body)
@@ -624,8 +624,8 @@ def generalOn() {
 def naturalOn() {
     log.debug "naturalOn >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "fanNatural",
+        "id": state.id,
+        "cmd": "fanNatural",
         "data": state.fanSpeed == null ? 25 : state.fanSpeed
     ]
     def options = makeCommand(body)
@@ -636,8 +636,8 @@ def naturalOn() {
 def setAngle30() {
     log.debug "setAngle30 >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angleLevel",
+        "id": state.id,
+        "cmd": "angleLevel",
         "data": 30
     ]
     def options = makeCommand(body)
@@ -647,8 +647,8 @@ def setAngle30() {
 def setAngle60() {
     log.debug "setAngle60 >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angleLevel",
+        "id": state.id,
+        "cmd": "angleLevel",
         "data": 60
     ]
     def options = makeCommand(body)
@@ -658,8 +658,8 @@ def setAngle60() {
 def setAngle90() {
     log.debug "setAngle90 >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angleLevel",
+        "id": state.id,
+        "cmd": "angleLevel",
         "data": 90
     ]
     def options = makeCommand(body)
@@ -669,8 +669,8 @@ def setAngle90() {
 def setAngle120() {
     log.debug "setAngle120 >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angleLevel",
+        "id": state.id,
+        "cmd": "angleLevel",
         "data": 120
     ]
     def options = makeCommand(body)
@@ -680,8 +680,8 @@ def setAngle120() {
 def setAngleOn() {
     log.debug "setAngleOn >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angle",
+        "id": state.id,
+        "cmd": "angle",
         "data": "on"
     ]
     def options = makeCommand(body)
@@ -691,8 +691,8 @@ def setAngleOn() {
 def setAngleOff() {
     log.debug "setAngleOff >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "angle",
+        "id": state.id,
+        "cmd": "angle",
         "data": "off"
     ]
     def options = makeCommand(body)
@@ -702,8 +702,8 @@ def setAngleOff() {
 def setMoveLeft() {
     log.debug "setMoveLeft >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "moveDirection",
+        "id": state.id,
+        "cmd": "moveDirection",
         "data": "left"
     ]
     def options = makeCommand(body)
@@ -713,8 +713,8 @@ def setMoveLeft() {
 def setMoveRight() {
     log.debug "setMoveRight >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "moveDirection",
+        "id": state.id,
+        "cmd": "moveDirection",
         "data": "right"
     ]
     def options = makeCommand(body)
@@ -724,8 +724,8 @@ def setMoveRight() {
 def setBright() {
     log.debug "setBright >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "ledBrightness",
+        "id": state.id,
+        "cmd": "ledBrightness",
         "data": "bright"
     ]
     def options = makeCommand(body)
@@ -735,8 +735,8 @@ def setBright() {
 def setBrightDim() {
     log.debug "setDim >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "ledBrightness",
+        "id": state.id,
+        "cmd": "ledBrightness",
         "data": "dim"
     ]
     def options = makeCommand(body)
@@ -746,8 +746,8 @@ def setBrightDim() {
 def setBrightOff() {
     log.debug "setLedOff >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "ledBrightness",
+        "id": state.id,
+        "cmd": "ledBrightness",
         "data": "off"
     ]
     def options = makeCommand(body)
@@ -757,8 +757,8 @@ def setBrightOff() {
 def buzzerOn() {
     log.debug "buzzerOn >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "buzzer",
+        "id": state.id,
+        "cmd": "buzzer",
         "data": "on"
     ]
     def options = makeCommand(body)
@@ -768,8 +768,8 @@ def buzzerOn() {
 def buzzerOff() {
     log.debug "buzzerOff >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "buzzer",
+        "id": state.id,
+        "cmd": "buzzer",
         "data": "off"
     ]
     def options = makeCommand(body)
@@ -779,8 +779,8 @@ def buzzerOff() {
 def on() {
     log.debug "On >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "power",
+        "id": state.id,
+        "cmd": "power",
         "data": "on"
     ]
     def options = makeCommand(body)
@@ -790,8 +790,8 @@ def on() {
 def off() {
     log.debug "Off >> ${state.id}"
     def body = [
-        "id"  : state.id,
-        "cmd" : "power",
+        "id": state.id,
+        "cmd": "power",
         "data": "off"
     ]
     def options = makeCommand(body)
@@ -826,16 +826,16 @@ def callback(physicalgraph.device.HubResponse hubResponse) {
         msg = parseLanMessage(hubResponse.description)
         def jsonObj = new JsonSlurper().parseText(msg.body)
         log.debug jsonObj
-        state.currenthumi = jsonObj.properties.relativeHumidity == null ? "" : jsonObj.properties.relativeHumidity
+        state.currenthumi = jsonObj.properties.relativeHumidity == null ? "": jsonObj.properties.relativeHumidity
         int temp = jsonObj.properties.temperature.value
         state.currenttemp = temp
         state.currentangle = jsonObj.properties.angleLevel
-        state.acPower = (jsonObj.properties.acPower == "on" ? "☈: " : "✕: ")
-        state.batteryLe = jsonObj.state.batteryLevel == null ? "" : jsonObj.state.batteryLevel
+        state.acPower = (jsonObj.properties.acPower == "on" ? "☈: ": "✕: ")
+        state.batteryLe = jsonObj.state.batteryLevel == null ? "": jsonObj.state.batteryLevel
         sendEvent(name: "setangle", value: jsonObj.properties.angleEnable)
         sendEvent(name: "setdirection", value: jsonObj.properties.angleEnable)
-        sendEvent(name: "switch", value: jsonObj.properties.power == true ? "on" : "off")
-        sendEvent(name: "buzzer", value: (jsonObj.state.buzzer == true ? "on" : "off"))
+        sendEvent(name: "switch", value: jsonObj.properties.power == true ? "on": "off")
+        sendEvent(name: "buzzer", value: (jsonObj.state.buzzer == true ? "on": "off"))
         sendEvent(name: "ledBrightness", value: jsonObj.state.ledBrightness)
         sendEvent(name: "battery", value: state.batteryLe)
         if (jsonObj.properties.naturalLevel > 0) {
@@ -865,8 +865,8 @@ def multiatt() {
     sendEvent(name: "lastCheckin", value: state.temp + ": " + state.currenttemp + "° " + state.hum + ": " + state.currenthumi + "% " + state.angle + ": " + state.currentangle + "°" + " AC" + state.acPower + state.batteryLe + "%")
     // for new smartthings app	
     sendEvent(name: "temperature", value: state.currenttemp, unit: "C")
-    sendEvent(name: "battery", value: state.batteryLe == null ? "" : state.batteryLe)
-    sendEvent(name: "powerSource", value: (state.acPower == "☈: " ? "dc" : "battery"))
+    sendEvent(name: "battery", value: state.batteryLe == null ? "": state.batteryLe)
+    sendEvent(name: "powerSource", value: (state.acPower == "☈: " ? "dc": "battery"))
 }
 
 def sendCommand(options, _callback) {
@@ -876,13 +876,13 @@ def sendCommand(options, _callback) {
 
 def makeCommand(body) {
     def options = [
-        "method" : "POST",
-        "path"   : "/control",
+        "method": "POST",
+        "path": "/control",
         "headers": [
-            "HOST"        : parent._getServerURL(),
+            "HOST": parent._getServerURL(),
             "Content-Type": "application/json"
         ],
-        "body"   : body
+        "body": body
     ]
     return options
 }
