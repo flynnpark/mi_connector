@@ -1,9 +1,9 @@
 /**
- *  Xiaomi Sensor Temperature & Humidity (v.0.0.3)
+ *  Xiaomi Air Monitor CGDN1 (v.0.0.5)
  *
  * MIT License
  *
- * Copyright (c) 2018 fison67@nate.com
+ * Copyright (c) 2020 fison67@nate.com
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,32 +25,42 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 import groovy.json.JsonSlurper
-import java.text.DateFormat
 
 metadata {
-	definition (name: "xiaomi weather", namespace: "fison67", author: "fison67", vid: "SmartThings-smartthings-Xiaomi_Temperature_Humidity_Sensor", ocfDeviceType: "oic.d.thermostat") {
+	definition (name: "Xiaomi Air Monitor CGDN1", namespace: "fison67", author: "fison67", ocfDeviceType: "oic.d.airpurifier") {
+		capability "Dust Sensor"
         capability "Temperature Measurement"
+        capability "Carbon Dioxide Measurement"
         capability "Relative Humidity Measurement"
-        capability "Sensor"
-        capability "Battery"
-        capability "Refresh"
-         
-        attribute "pressure", "string"
-	}
-
-	simulator {}
-    
-	preferences {
-		input name: "temperatureType", title:"Select a type" , type: "enum", required: true, options: ["C", "F"], defaultValue: "C"
+		capability "Refresh"
+		capability "Battery"
+        capability "Power Source"
 	}
 }
+
+def installed(){
+	sendEvent(name:"fineDustLevel", value: 10)
+	sendEvent(name:"dustLevel", value: 10)
+	sendEvent(name:"temperature", value: 20, unit:"C")
+	sendEvent(name:"humidity", value: 40, unit:"%")
+	sendEvent(name:"battery", value: 100, unit:"%")
+	sendEvent(name:"carbonDioxide", value: 900, unit:"ppm")
+	sendEvent(name:"powerSource", value: "battery")
+}
+    
+def updated() {}
 
 // parse events into attributes
 def parse(String description) {
 	log.debug "Parsing '${description}'"
+}
+
+def setExternalAddress(address){
+	log.debug "External Address >> ${address}"
+	state.externalAddress = address
 }
 
 def setInfo(String app_url, String id) {
@@ -59,49 +69,43 @@ def setInfo(String app_url, String id) {
     state.id = id
 }
 
-def setExternalAddress(address){
-	log.debug "External Address >> ${address}"
-	state.externalAddress = address
-}
-
 def setStatus(params){
     log.debug "${params.key} : ${params.data}"
     
- 	switch(params.key){
+    switch(params.key){
     case "relativeHumidity":
-		def para = "${params.data}"
-		String data = para
-		def stf = Float.parseFloat(data)
-		def humidity = Math.round(stf)
-    	sendEvent(name:"humidity", value: humidity, unit: "%" )
+    	sendEvent(name:"humidity", value: "${params.data}" as int, unit: "%")
     	break;
     case "temperature":
-		def para = "${params.data}"
-		String data = para
-		def st = data.replace("C","");
-		def stf = Float.parseFloat(st)
-		def tem = Math.round(stf*10)/10
-        def temperatue = makeTemperature(tem)
-        sendEvent(name:"temperature", value: temperatue, unit: temperatureType == null ? "C" : temperatureType)
-    	break;
-    case "atmosphericPressure":
-    	sendEvent(name:"pressure", value: params.data.replace(" Pa","").replace(",","").toInteger()/1000 )
-    	break;
-    case "batteryLevel":
-    	sendEvent(name:"battery", value: params.data, unit:"%" )
-    	break;	
+        sendEvent(name:"temperature", value:  Float.parseFloat("${params.data}".replace("C","")), unit:"C" )
+    	break;    
+    case "carbonDioxide":
+        sendEvent(name:"carbonDioxide", value: params.data as int, unit:"ppm" )
+    	break;    
+    case "battery":
+        sendEvent(name:"battery", value: "${params.data}" as int , unit:"%" )
+    	break;    
+    case "pm2.5":
+        sendEvent(name:"fineDustLevel", value: "${params.data}" as int )
+    	break;    
+    case "pm10":
+        sendEvent(name:"dustLevel", value: "${params.data}" as int )
+    	break;    
+    case "charging":
+        sendEvent(name:"powerSource", value: getPowerSource("${params.data}" as int) )
+    	break;   
     }
 }
 
-def makeTemperature(temperature){
-	if(temperatureType == "F"){
-    	return ((temperature * 9 / 5) + 32)
-    }else{
-    	return temperature
+def getPowerSource(data){
+	if(data == 1){
+    	return "mains"
+    }else if(data == 2){
+    	return "battery"
+    }else {
+    	return "unknown"
     }
 }
-
-def updated() {}
 
 def refresh(){
 	log.debug "Refresh"
@@ -121,20 +125,24 @@ def sendCommand(options, _callback){
     sendHubCommand(myhubAction)
 }
 
+def makeCommand(body){
+	def options = [
+     	"method": "POST",
+        "path": "/control",
+        "headers": [
+        	"HOST": parent._getServerURL(),
+            "Content-Type": "application/json"
+        ],
+        "body":body
+    ]
+    return options
+}
+
 def callback(physicalgraph.device.HubResponse hubResponse){
-	def msg
     try {
-        msg = parseLanMessage(hubResponse.description)
+        def msg = parseLanMessage(hubResponse.description)
 		def jsonObj = new JsonSlurper().parseText(msg.body)
         log.debug jsonObj
-        
- 		sendEvent(name:"battery", value: jsonObj.properties.batteryLevel)
-        sendEvent(name:"temperature", value: makeTemperature(jsonObj.properties.temperature.value))
-        sendEvent(name:"humidity", value: jsonObj.properties.relativeHumidity)
-        sendEvent(name:"pressure", value: jsonObj.properties.atmosphericPressure.value / 1000)
-        
-        updateLastTime()
-        checkNewDay()
     } catch (e) {
         log.error "Exception caught while parsing data: "+e;
     }
